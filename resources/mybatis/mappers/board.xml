@@ -3,65 +3,75 @@
 
 <mapper namespace="board">
 
-	<select id="getbyBoardList" resultType="BoardListVo" parameterType="map">
+	<select id="getBoardList" resultType="BoardDTO" parameterType="map">
 		<![CDATA[
 			select * 
-			from (select c.*, rownum as rnum, COUNT(*) OVER() AS TOTCNT 
-					from (select a.no,
-								 a.title,  
-								 a.member_no as memberNo,  
-								 b.name as memberName,  
-								 a.view_cnt as viewCnt,  
-								 to_char(a.reg_date, 'yyyy-mm-dd hh:mi:ss') as regDate, 
-								 a.group_no as groupNo, 
-								 a.order_no as orderNo, 
-								 a.depth 
-							from board2 a, member b  
-							where a.member_no = b.no #{where}  
+			from (select c.*, rownum as rnum
+					from (select a.no, a.title, a.member_no as memberNo, b.name as memberName, a.view_cnt as viewCnt, to_char(a.reg_date, 'yyyy-mm-dd hh:mi:ss') as regDate, a.depth 
+						  from board a, member b  
+						  where a.member_no = b.no 
+		]]>
+		<if test="kwd!=''">
+			and (a.title like '%${kwd}%' or a.content like '%${kwd}%')
+		</if>
+		<![CDATA[
 							order by group_no DESC, order_no ASC) c)  
 			where rnum>=#{start} and rnum<=#{end}
 		]]>
 	</select>
 	
+	<select id="getCount" resultType="long" parameterType="map">
+		<![CDATA[
+			select COUNT(*) from board
+		]]>
+		<if test="kwd != ''">
+			<![CDATA[				     
+			 where ( title like '%${kwd }%' or content like '%${kwd }%' )
+			]]>
+		</if>	
+	</select>
+	
+	<select id="getOneBoardData" resultType="BoardVo" parameterType="long">
+		<![CDATA[
+			select no, title, content, member_no as memberNo, group_no as groupNo, order_no as orderNo, depth 
+			from board where no=#{no}
+		]]>
+		
+	</select>
+	
 	<insert id="insert" parameterType="BoardVo">
 		<![CDATA[
-			insert into board2 values( board_no_seq.nextval, #{title}, #{content}, #{memberNo}, 0, SYSDATE)
+			insert into board values( board_no_seq.nextval, #{title}, #{content}, #{memberNo}, 0, SYSDATE, #{groupNo}, #{orderNo}, #{depth})
 		]]>
 	</insert>
 
-	<select id="view" resultType="BoardVo" parameterType="long">
-		<![CDATA[
-		select no, title, content, member_no as memberNo from board2 where no=#{no}
-		]]>
-	</select>
-	
 	<delete id="delete" parameterType="map">
 		<![CDATA[
-			delete from board2 where no=#{no} and member_no=#{memberNo}
+			delete from board where no=#{no} and member_no=#{memberNo}
 		]]>
 	</delete>
 	
 	<update id="update" parameterType="BoardVo">
 		<![CDATA[
-			update board2 set title=#{title}, content=#{content} where no=#{no}
+			update board set title=#{title}, content=#{content} where no=#{no} and member_no=#{memberNo}
 		]]>
 	</update>
 	
 	<update id="viewCount" parameterType="long">
 		<![CDATA[
-			update board2 set view_cnt=view_cnt+1 where no=#{no}
+			update board set view_cnt=view_cnt+1 where no=#{no}
 		]]>
 	</update>
 	
-	<select id="getbyGroupNo" resultType="long">
+	<select id="getGroupNo" resultType="long">
 		<![CDATA[
-			select nvl(max(group_no), 0) as maxGroupNo from board2
+			select nvl(max(group_no), 0) as maxGroupNo from board
 		]]>
 	</select>
 	
 	<update id="updateOrderNo" parameterType="long">
 		<![CDATA[
-			update board2 set order_no=order_no+1 where order_no >=#{orderNo}
+			update board set order_no= order_no + 1 where order_no >=#{orderNo}
 		]]>
 	</update>
 	

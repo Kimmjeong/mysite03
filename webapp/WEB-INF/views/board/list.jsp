@@ -15,8 +15,8 @@
 		<c:import url="/WEB-INF/views/include/header.jsp"/>
 		<div id="content">
 			<div id="board">
-				<form id="search_form" action="${pageContext.request.contextPath }/board/" method="post">
-					<input type="text" id="kwd" name="kwd" value="${kwd }">
+				<form id="search_form" action="${pageContext.request.contextPath }/board" method="get">
+					<input type="text" id="kwd" name="kwd" value="${listData.kwd }">
 					<input type="submit" value="찾기">
 				</form>
 				<table class="tbl-ex">
@@ -29,11 +29,11 @@
 						<th>&nbsp;</th>
 					</tr>				
 				
-				<c:set var="countTotal" value="${totalCount}"/>  <%-- 게시글 갯수 --%>
+				<c:set var="totalCount" value="${listData.totalCount}"/>  <%-- 게시글 갯수 --%>
 				
-				<c:forEach items="${list }" var="list" varStatus="i">
+				<c:forEach items="${listData.list }" var="list" varStatus="i">
 						<tr>
-							<td>${countTotal-(list.rnum-1)}</td> <!-- 글번호 -->
+							<td>${listData.totalCount-(listData.pageSize*(listData.nowPage-1))-i.index}</td> <!-- 글번호 -->
 							<td class="title" style="padding-left:${( list.depth )*10 }px">
 								<c:if test="${list.depth > 0 }">
 									<img src="${pageContext.request.contextPath }/assets/images/ico-reply.gif">
@@ -45,7 +45,7 @@
 							<td><c:choose>
 									<c:when test='${authUser.no == list.memberNo }'>
 										<a
-											href="${pageContext.request.contextPath }/board/delete/${list.no }&${list.memberNo }"
+											href="${pageContext.request.contextPath }/board/delete/${list.no }"
 											class="del">삭제</a>
 									</c:when>
 									<c:otherwise>
@@ -61,28 +61,28 @@
 				<div class="pager">
 					<ul>
 						
-						<c:set var="p" value="${temp }"/> <%-- 페이지바 시작 번호 --%>
+						<c:set var="pageNum" value="${listData.pageNum }"/> <%-- 페이지바 시작 번호 --%>
 						
-						<c:if test="${p!=1}">
-								<li class="pg-prev"><a href="${pageContext.request.contextPath }/board/${p-1}&${kwd }">◀ 이전</a></li>
+						<c:if test="${pageNum!=1}">
+								<li class="pg-prev"><a href="${pageContext.request.contextPath }/board?p=${pageNum-1}&kwd=${listData.kwd }">◀ 이전</a></li>
 						</c:if>
 						
-						<c:forEach begin="1" end="${totalPage}" var="i">
-							<c:if test="${!(i > blockSize || p > totalPage) }">
+						<c:forEach begin="1" end="${listData.totalPage}" var="i">
+							<c:if test="${!(i > listData.blockSize || pageNum > listData.totalPage) }">
 								<c:choose> 
-									<c:when test="${p!=nowPage }" > <%-- 현재 페이지가 아닐 경우 링크걸기 --%>
-										<li><a href="${pageContext.request.contextPath }/board/${p}&${kwd }">${p}</a></li>
+									<c:when test="${pageNum!=listData.nowPage }" > <%-- 현재 페이지가 아닐 경우 링크걸기 --%>
+										<li><a href="${pageContext.request.contextPath }/board?p=${pageNum}&kwd=${listData.kwd }">${pageNum}</a></li>
 									</c:when>
 									<c:otherwise> <%-- 현재 페이지이면 색 주기 --%>
-										<li><a href="${pageContext.request.contextPath }/board/${p}&${kwd }"><font color="red">${p}</font></a></li>
+										<li><font color="red">${pageNum}</font></li>
 									</c:otherwise>
 								</c:choose>
-								<c:set var="p" value="${p+1}"/>
+								<c:set var="pageNum" value="${pageNum+1}"/>
 							</c:if>
 						</c:forEach>
 						
-						<c:if test="${p <= totalPage}">
-								<li class="pg-next"><a href="${pageContext.request.contextPath }/board/${p}&${kwd }">다음 ▶</a></li>
+						<c:if test="${pageNum <= listData.totalPage}">
+								<li class="pg-next"><a href="${pageContext.request.contextPath }/board?p=${pageNum}&kwd=${listData.kwd }">다음 ▶</a></li>
 						</c:if>
 						
 					</ul>	

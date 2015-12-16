@@ -1,6 +1,6 @@
 package com.hanains.mysite.vo;
 
-public class BoardListVo {
+public class BoardDTO {
 
 	private Long no;
 	private String title;
@@ -11,22 +11,7 @@ public class BoardListVo {
 	private Long groupNo;
 	private Long orderNo;
 	private Long depth;
-	private Long rnum;
-	private Long totcnt;
-	
 
-	public Long getRnum() {
-		return rnum;
-	}
-	public void setRnum(Long rnum) {
-		this.rnum = rnum;
-	}
-	public Long getTotcnt() {
-		return totcnt;
-	}
-	public void setTotcnt(Long totcnt) {
-		this.totcnt = totcnt;
-	}
 	public Long getGroupNo() {
 		return groupNo;
 	}
@@ -83,9 +68,9 @@ public class BoardListVo {
 	}
 	@Override
 	public String toString() {
-		return "BoardListVo [no=" + no + ", title=" + title + ", memberNo=" + memberNo + ", memberName=" + memberName
+		return "BoardDTO [no=" + no + ", title=" + title + ", memberNo=" + memberNo + ", memberName=" + memberName
 				+ ", viewCnt=" + viewCnt + ", regDate=" + regDate + ", groupNo=" + groupNo + ", orderNo=" + orderNo
-				+ ", depth=" + depth + ", rnum=" + rnum + ", totcnt=" + totcnt + "]";
+				+ ", depth=" + depth +"]";
 	}
 
 	

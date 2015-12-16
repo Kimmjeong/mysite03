@@ -8,7 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.hanains.mysite.vo.BoardListVo;
+import com.hanains.mysite.vo.BoardDTO;
 import com.hanains.mysite.vo.BoardVo;
 
 @Repository
@@ -18,36 +18,43 @@ public class BoardDao {
 	private SqlSession sqlSession;
 		
 	// 전체 글목록
-	public List<BoardListVo> getList(boolean search, String kwd, Long start, Long end){
-		
-		String where = "";
-
-		if (search) {
-			where = "and (a.title like '%%"+kwd+"%%' or b.name like '%%"+kwd+"%%')" ;
-		}
-		
-		System.out.println("검색?: "+where);
-		System.out.println(start);
-		System.out.println(end);
+	public List<BoardDTO> getList(String kwd, Long start, Long end){
 		
 		Map<String, Object> map=new HashMap<>();
 		map.put("start", start);
 		map.put("end", end);
-		map.put("where", where);
+		map.put("kwd", kwd);
 		
-		List<BoardListVo> list=sqlSession.selectList("board.getbyBoardList", map);
+		List<BoardDTO> list=sqlSession.selectList("board.getBoardList", map);
 		return list;
 	}
+	
+	// 게시글 수
+	public Long getCount(String kwd){
+		Map<String, Object> map=new HashMap<>();
+		map.put("kwd", kwd);
 		
-	// 글쓰기
-	public void insert(BoardVo vo){
-		sqlSession.selectOne("board.insert", vo);
+		Long cnt=sqlSession.selectOne("board.getCount",map);
+		return cnt;
 	}
-
+	
+	// 하나의 게시글 정보
+	public BoardVo getOneBoard(Long no){
+		BoardVo vo=sqlSession.selectOne("board.getOneBoardData",no);
+		return vo;
+	}
+	
+	/*
 	// 글보기
 	public BoardVo view(Long no){
 		BoardVo vo=sqlSession.selectOne("board.view",no);
 		return vo;
+	}
+	*/	
+	
+	// 글쓰기
+	public void insert(BoardVo vo){
+		sqlSession.selectOne("board.insert", vo);
 	}
 
 	// 글삭제
@@ -73,13 +80,13 @@ public class BoardDao {
 
 	// 최대 그룹 번호
 	public Long getGroupNo() {
-		Long maxGroupNo=sqlSession.selectOne("board.getbyGroupNo");
+		Long maxGroupNo=sqlSession.selectOne("board.getGroupNo");
 		return maxGroupNo;
 	}
 
 	// 그룹 내 순서 업데이트
 	public void updateOrderNo(Long orderNo) {
-		sqlSession.selectOne("board.updateOrderNo");
+		sqlSession.selectOne("board.updateOrderNo", orderNo);
 	}
 		
 }

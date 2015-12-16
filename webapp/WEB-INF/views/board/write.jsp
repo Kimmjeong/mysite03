@@ -15,9 +15,12 @@
 		<div id="content">
 			<div id="board">
 				<form class="board-form" method="post" action="${pageContext.request.contextPath}/board/write">
+					<input type="hidden" name="groupNo" value="${vo.groupNo }">
+					<input type="hidden" name="orderNo" value="${vo.orderNo }">
+					<input type="hidden" name="depth" value="${vo.depth }">
 					<table class="tbl-ex">
 						<tr>
-							<th colspan="2">글쓰기${session.authUser.member_no}</th>
+							<th colspan="2">글쓰기</th>
 						</tr>
 						<tr>
 							<td class="label">제목</td>
@@ -32,6 +35,7 @@
 					</table>
 					<div class="bottom">
 						<a href="${pageContext.request.contextPath}/board/">취소</a>
+						
 						<input type="submit" value="등록">
 					</div>
 					

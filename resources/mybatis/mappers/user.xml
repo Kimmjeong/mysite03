@@ -19,4 +19,10 @@
 			insert into member values ( member_no_seq.nextval, #{name}, #{email}, #{password}, #{gender} )
 		]]>
 	</insert>
+	
+	<select id="selectByEmail" resultType="UserVo" parameterType="string">
+		<![CDATA[
+			select no, name, email, gender from member where email=#{email}
+		]]>
+	</select>
 </mapper>

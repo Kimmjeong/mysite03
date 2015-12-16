@@ -6,7 +6,7 @@
 		<typeAlias alias="UserVo" type="com.hanains.mysite.vo.UserVo" />
 		<typeAlias alias="GuestBookVo" type="com.hanains.mysite.vo.GuestBookVo" />
 		<typeAlias alias="BoardVo" type="com.hanains.mysite.vo.BoardVo" />
-		<typeAlias alias="BoardListVo" type="com.hanains.mysite.vo.BoardListVo" />
+		<typeAlias alias="BoardDTO" type="com.hanains.mysite.vo.BoardDTO" />
     </typeAliases>
     	
 	<mappers>

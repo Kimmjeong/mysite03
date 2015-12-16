@@ -1,6 +1,6 @@
 package com.hanains.mysite.controller;
 
-import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hanains.mysite.service.BoardService;
-import com.hanains.mysite.vo.BoardListVo;
 import com.hanains.mysite.vo.BoardVo;
 import com.hanains.mysite.vo.UserVo;
 
@@ -23,42 +22,29 @@ public class BoardController {
 
 	@Autowired
 	private BoardService boardService;
-	
-	 // 전체 리스트
-	@RequestMapping("/{page}")
+
+	// 리스트
+	@RequestMapping("")
 	public String list(
-			@PathVariable("page") Long page,
-			HttpSession session, Model model
+			@RequestParam(value="kwd", required=true, defaultValue="") String kwd,
+			@RequestParam(value="p", required=true, defaultValue="1") Long page,
+			Model model
 			){
 		
-		System.out.println("전체리스트");
+		Map<String, Object> map=boardService.list(page, kwd);
+		model.addAttribute("listData",map);
 		
-		String kwd=null;
-		
-		List<BoardListVo> list=boardService.list(model, session, page, kwd);
-		model.addAttribute(list);
-		return "/board/list";
-	}
-	
-	// 검색리스트
-	@RequestMapping("/{page}&{kwd}")
-	public String searchList(
-			@PathVariable("page") Long page,
-			@PathVariable("kwd") String kwd,
-			HttpSession session, Model model
-			){
-		
-		System.out.println("검색리스트");
-		
-		List<BoardListVo> list=boardService.list(model, session, page, kwd);
-		model.addAttribute(list);
 		return "/board/list";
 	}
 	
 	
 	// 글쓰기 폼
 	@RequestMapping("/writeform") 
-	public String writeform(){
+	public String writeform(HttpSession session){
+		UserVo authUser=(UserVo) session.getAttribute("authUser");
+		if(authUser==null){
+			return "redirect:/user/loginform";
+		}
 		return "/board/write";
 	}
 	
@@ -66,18 +52,30 @@ public class BoardController {
 	@RequestMapping("/write") 
 	public String write(HttpSession session, @ModelAttribute BoardVo vo){
 		UserVo authUser=(UserVo) session.getAttribute("authUser");
-		if(authUser!=null){
-			vo.setMemberNo(authUser.getNo());
-			boardService.insert(vo);
+		vo.setMemberNo(authUser.getNo());
+		
+		boardService.insert(vo);
+		return "redirect:/board";
+	}
+	
+	// 답글달기 폼
+	@RequestMapping("/reply/{no}")
+	public String reply(HttpSession session, @PathVariable("no") Long no, Model model){
+		UserVo authUser=(UserVo) session.getAttribute("authUser");
+		if(authUser==null){
+			return "redirect:/user/loginform";
 		}
-		return "redirect:/board/";
+		
+		BoardVo vo = boardService.writeInfo(no);
+		model.addAttribute("vo",vo);
+		return "/board/write";
 	}
 	
 	// 글보기
 	@RequestMapping("/view/{no}") 
-	public String view(HttpSession session, @PathVariable("no") Long no, Model model){
-		BoardVo writing=boardService.view(session, no);
-		model.addAttribute("writing",writing);
+	public String view(@PathVariable("no") Long no, Model model){
+		BoardVo vo=boardService.view(no);
+		model.addAttribute("vo",vo);
 		return "/board/view";
 	}
 	
@@ -85,35 +83,47 @@ public class BoardController {
 	@RequestMapping("/modifyform/{no}") 
 	public String modifyform(@PathVariable("no") Long no, Model model,HttpSession session){
 		
-		BoardVo writing=boardService.view(session, no);
+		
 		UserVo authUser=(UserVo) session.getAttribute("authUser");
 		
-		if(authUser==null || authUser.getNo()!=writing.getMemberNo()){
-			return "redirect:/board/view/"+no;
+		if(authUser==null){
+			return "redirect:/user/loginform";
 		}
 		
-		model.addAttribute("writing",writing);
+		BoardVo vo=boardService.view(no);
+		model.addAttribute("vo",vo);
 		return "/board/modify";
 		
 	}
 	
 	// 글수정
 	@RequestMapping("/modify") 
-	public String modify(@ModelAttribute BoardVo vo, @RequestParam(value = "no", required = true, defaultValue = "") Long no){
+	public String modify(HttpSession session, @ModelAttribute BoardVo vo){
+		// 로그인 사용자 체크
+		UserVo authUser = (UserVo)session.getAttribute( "authUser" );
+		if( authUser == null ) {
+			return "redirect:/user/loginform";
+		}
+
+		vo.setMemberNo( authUser.getNo() );
+		
 		boardService.update(vo);
-		return "redirect:/board/view/"+no;
+		return "redirect:/board/";
 	}
 	
 	// 삭제
-	@RequestMapping("/delete/{no}&{memberNo}") 
-	public String delete(HttpSession session, @PathVariable("no") Long no, @PathVariable("memberNo") Long memberNo){
-		UserVo authUser=(UserVo) session.getAttribute("authUser");
-		if (authUser != null) {
-			if (authUser.getNo().equals(memberNo))
-				boardService.delete(no, memberNo);
-
+	@RequestMapping("/delete/{no}") 
+	public String delete(HttpSession session, @PathVariable("no") Long no){
+		
+		// 로그인 사용자 체크
+		UserVo authUser = (UserVo)session.getAttribute( "authUser" );
+		if( authUser == null ) {
+			return "redirect:/user/loginform";
 		}
-		return "redirect:/board/";
-	}
+
+		boardService.delete( no, authUser.getNo() );
+		return "redirect:/board";
+	}	
+		
 	
 }

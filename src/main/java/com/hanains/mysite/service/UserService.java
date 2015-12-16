@@ -20,4 +20,14 @@ public class UserService {
 		UserVo authUser=userDao.get(vo.getEmail(), vo.getPassword());
 		return authUser;
 	}
+	
+	public UserVo getUser(Long no){
+		UserVo userVo=userDao.get(no);
+		return userVo;
+	}
+	
+	public UserVo getUser(String email){
+		UserVo userVo=userDao.get(email);
+		return userVo;
+	}
 }

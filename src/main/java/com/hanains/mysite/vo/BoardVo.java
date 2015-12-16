@@ -65,6 +65,12 @@ public class BoardVo {
 	public void setDepth(Long depth) {
 		this.depth = depth;
 	}
+	@Override
+	public String toString() {
+		return "BoardVo [no=" + no + ", title=" + title + ", content=" + content + ", memberNo=" + memberNo
+				+ ", viewCnt=" + viewCnt + ", regDate=" + regDate + ", groupNo=" + groupNo + ", orderNo=" + orderNo
+				+ ", depth=" + depth + "]";
+	}
 	
 	
 
