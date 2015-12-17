@@ -14,7 +14,7 @@
 		<c:import url="/WEB-INF/views/include/header.jsp"/>
 		<div id="content">
 			<div id="board">
-				<form class="board-form" method="post" action="${pageContext.request.contextPath}/board/write">
+				<form class="board-form" method="post" action="${pageContext.request.contextPath}/board/write" enctype="multipart/form-data">
 					<input type="hidden" name="groupNo" value="${vo.groupNo }">
 					<input type="hidden" name="orderNo" value="${vo.orderNo }">
 					<input type="hidden" name="depth" value="${vo.depth }">
@@ -31,6 +31,10 @@
 							<td>
 								<textarea id="content" name="content"></textarea>
 							</td>
+						</tr>
+						<tr>
+							<td class="label">파일첨부</td>
+							<td><input type="file" name="uploadFile"></td>
 						</tr>
 					</table>
 					<div class="bottom">

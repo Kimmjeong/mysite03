@@ -7,6 +7,7 @@
 		<typeAlias alias="GuestBookVo" type="com.hanains.mysite.vo.GuestBookVo" />
 		<typeAlias alias="BoardVo" type="com.hanains.mysite.vo.BoardVo" />
 		<typeAlias alias="BoardDTO" type="com.hanains.mysite.vo.BoardDTO" />
+		<typeAlias alias="UploadFileVo" type="com.hanains.mysite.vo.UploadFileVo" />
     </typeAliases>
     	
 	<mappers>

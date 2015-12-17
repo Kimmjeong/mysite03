@@ -36,10 +36,10 @@ public class UserController {
 	
 	@RequestMapping("/loginform")
 	public String loginform(){
-		
 		return "/user/loginform"; // loginform.jsp
 	}
 	
+	/*	
 	@RequestMapping("/login")
 	public String login(HttpSession session, @ModelAttribute UserVo vo){
 		UserVo authUser=userService.login(vo);
@@ -50,12 +50,14 @@ public class UserController {
 		session.setAttribute("authUser", authUser);
 		return "redirect:/"; // main으로 가도록
 	}
-	
-	
+	*/
+	/*
 	@RequestMapping("/logout")
 	public String logout(HttpSession session){
 		session.removeAttribute("authUser");
 		session.invalidate();
 		return "redirect:/"; // main으로 가도록
 	}
+	
+	*/
 }

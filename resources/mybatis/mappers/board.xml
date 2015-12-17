@@ -39,11 +39,25 @@
 		
 	</select>
 	
+	<select id="getFileData" resultType="UploadFileVo" parameterType="Long">
+		<![CDATA[
+			select save_name as saveName,
+					original_name as originalName
+			 from upload_file where board_no=#{no}
+		]]>
+	</select>
+	
 	<insert id="insert" parameterType="BoardVo">
 		<![CDATA[
 			insert into board values( board_no_seq.nextval, #{title}, #{content}, #{memberNo}, 0, SYSDATE, #{groupNo}, #{orderNo}, #{depth})
 		]]>
 	</insert>
+	
+	<insert id="insertFile" parameterType="UploadFileVo">
+		<![CDATA[
+			insert into upload_file values(file_no_seq.nextval, board_no_seq.currval, #{originalName}, #{saveName}, #{extName}, #{fileSize})
+		]]>
+	</insert> 
 
 	<delete id="delete" parameterType="map">
 		<![CDATA[

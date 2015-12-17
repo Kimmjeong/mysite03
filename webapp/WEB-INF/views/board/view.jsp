@@ -12,6 +12,7 @@
 <link href="${pageContext.request.contextPath}/assets/css/board.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+<c:set var="vo" value="${writeView.boardVo}"/>
 	<div id="container">
 		<c:import url="/WEB-INF/views/include/header.jsp"/>
 		<div id="content">
@@ -28,6 +29,14 @@
 						<td class="label">내용</td>
 						<td>
 							<div class="view-content">${fn:replace(vo.content,enter,"<br>") }</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="label">파일</td>
+						<td>
+							<c:if test="${not empty writeView.imageUrl }">
+								<img src="${pageContext.request.contextPath }${writeView.imageUrl }" style="width:150px"><br>
+							</c:if>
 						</td>
 					</tr>
 				</table>

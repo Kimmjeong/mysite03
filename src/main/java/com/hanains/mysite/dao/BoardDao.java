@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.hanains.mysite.vo.BoardDTO;
 import com.hanains.mysite.vo.BoardVo;
+import com.hanains.mysite.vo.UploadFileVo;
 
 @Repository
 public class BoardDao {
@@ -55,6 +56,18 @@ public class BoardDao {
 	// 글쓰기
 	public void insert(BoardVo vo){
 		sqlSession.selectOne("board.insert", vo);
+	}
+	
+	// 파일 업로드
+	public void insertFile(UploadFileVo vo){
+		sqlSession.selectOne("board.insertFile",vo);
+	}
+	
+	
+	public UploadFileVo getFileData(Long no){
+		UploadFileVo vo=sqlSession.selectOne("board.getFileData",no);
+		System.out.println(vo);
+		return vo;
 	}
 
 	// 글삭제

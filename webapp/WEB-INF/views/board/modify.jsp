@@ -10,6 +10,7 @@
 <link href="${pageContext.request.contextPath}/assets/css/board.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+<c:set var="vo" value="${writeView.boardVo}"/>
 	<div id="container">
 		<c:import url="/WEB-INF/views/include/header.jsp"/>
 		<div id="content">
@@ -29,6 +30,10 @@
 							<td>
 								<textarea id="content" name="content">${vo.content }</textarea>
 							</td>
+						</tr>
+						<tr>
+							<td class="label">파일</td>
+							<td><input type="file" name="uploadFile" value=""></td>
 						</tr>
 					</table>
 					<div class="bottom">

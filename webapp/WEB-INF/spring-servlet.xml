@@ -2,18 +2,19 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:aop="http://www.springframework.org/schema/aop" xmlns="http://www.springframework.org/schema/beans"
     xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd"
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd"
     xmlns:mvc="http://www.springframework.org/schema/mvc">
     
     <!-- 서블릿 컨테이너의 디폴트 서블릿 위임 핸들러 -->
     <mvc:default-servlet-handler/>
     
     <!-- validator, conversionService, messageConverter를 자동으로 등록 (default)-->
-	<!-- default에는 한글 encoding 안되어 있으므로 messageConverter를 통해 설정해야줘야함 -->
 	<mvc:annotation-driven>
+	
+		<!-- default에는 한글 encoding 안되어 있으므로 messageConverter를 통해 설정해야줘야함 -->
 		<mvc:message-converters>
 			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
 				<property name="supportedMediaTypes">
@@ -31,10 +32,20 @@
 				</property>
 			</bean>
 		</mvc:message-converters>
+		
+		<!-- argument resolver -->
+	     <mvc:argument-resolvers>
+		 <bean class="com.hanains.mysite.annotation.AuthUserHandlerMethodArgumentResolver"/>           
+	     </mvc:argument-resolvers>
+		
 	</mvc:annotation-driven>
+    
+    <!-- the mvc resources tag does the magic 파일업로드처리3 -->
+ 	<mvc:resources mapping="/board-images/**" location="file:/hanains/mysiteImage/" />
     
     <context:annotation-config />
     <context:component-scan base-package="com.hanains.mysite" />
+    
     
     <!-- 기본 뷰 리졸버  // jsp path 해석 : /WEB-INF/views/, .jsp path빼도 view이름으로 자동 접근-->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -43,5 +54,54 @@
 		<property name="suffix" value=".jsp" />
 		<property name="order" value="1" />
 	</bean>
+	
+	<!-- 멀티파트 리졸버 파일업로드처리2 -->
+	<bean id="multipartResolver" 
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 최대업로드 가능한 바이트크기 -->
+		<property name="maxUploadSize" value="52428800" />
+		<!-- 디스크에 임시 파일을 생성하기 전에 메모리에 보관할수있는 최대 바이트 크기 -->
+		<!-- property name="maxInMemorySize" value="52428800" /-->
+		<!-- defaultEncoding -->
+		<property name="defaultEncoding" value="utf-8" />
+	</bean>	
+	
 	    
+	<!-- Interceptors -->
+    <mvc:interceptors>
+   		 <!-- test
+    	<mvc:interceptor>
+        	<mvc:mapping path="/board/**" /> 
+    		<bean class="com.hanains.mysite.interceptor.MyInterceptor" />
+        </mvc:interceptor>
+    
+        <mvc:interceptor>
+        	<mvc:mapping path="/user/**" /> 
+    		<bean class="com.hanains.mysite.interceptor.MyInterceptor2" />
+        </mvc:interceptor>
+         -->
+        <mvc:interceptor>
+        	<mvc:mapping path="/user/login"/>
+    		<bean class="com.hanains.mysite.interceptor.AuthLoginInterceptor" />
+        </mvc:interceptor>
+        
+        <mvc:interceptor>
+        	<mvc:mapping path="/user/logout"/>
+    		<bean class="com.hanains.mysite.interceptor.AuthLogoutInterceptor" />
+        </mvc:interceptor>
+       
+        <mvc:interceptor>
+        	<mvc:mapping path="/**"/>
+        	<mvc:exclude-mapping path="/assets/**"/>
+    		<bean class="com.hanains.mysite.interceptor.AuthInterceptor" />
+        </mvc:interceptor>
+        
+         
+    </mvc:interceptors>
 </beans>
+
+<!-- path마다 다 쓰지 않고 <mvc:mapping path="/**"/>에 모든 경로해주고 어노테이션 만들어서 어노테이션 걸리는 애들만 처리해주게 함 -->
+        <!--  
+        	<mvc:mapping path="/board/writeform" /> 
+        	<mvc:mapping path="/board/reply/**" /> 
+        -->
