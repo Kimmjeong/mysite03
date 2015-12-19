@@ -8,13 +8,36 @@
 <title>mysite</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <link href="${pageContext.request.contextPath}/assets/css/board.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/jquery/jquery-1.9.0.js"></script>
+<script type="text/javascript">
+	function checkWrite(){
+		
+		var title=$("#title").val();
+		var content=$("textarea").val();
+		
+		if(title==""){
+			alert("제목을 써주세요.");
+			$("#title").focus();
+			return false;
+		}
+		
+		if(content==""){
+			alert("내용을 써주세요.");
+			$("#content").focus();
+			return false;
+		}
+		
+		return true;
+	}
+</script>
+
 </head>
 <body>
 	<div id="container">
 		<c:import url="/WEB-INF/views/include/header.jsp"/>
 		<div id="content">
 			<div id="board">
-				<form class="board-form" method="post" action="${pageContext.request.contextPath}/board/write" enctype="multipart/form-data">
+				<form class="board-form" method="post" action="${pageContext.request.contextPath}/board/write" enctype="multipart/form-data" id="frm">
 					<input type="hidden" name="groupNo" value="${vo.groupNo }">
 					<input type="hidden" name="orderNo" value="${vo.orderNo }">
 					<input type="hidden" name="depth" value="${vo.depth }">
@@ -24,7 +47,7 @@
 						</tr>
 						<tr>
 							<td class="label">제목</td>
-							<td><input type="text" name="title" value=""></td>
+							<td><input type="text" name="title" value="" id="title"></td>
 						</tr>
 						<tr>
 							<td class="label">내용</td>
@@ -40,7 +63,7 @@
 					<div class="bottom">
 						<a href="${pageContext.request.contextPath}/board/">취소</a>
 						
-						<input type="submit" value="등록">
+						<input type="submit" value="등록" onclick="return checkWrite()">
 					</div>
 					
 				</form>				

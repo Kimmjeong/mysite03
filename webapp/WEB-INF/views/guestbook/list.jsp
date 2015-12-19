@@ -10,6 +10,21 @@
 <title>mysite</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <link href="${pageContext.request.contextPath}/assets/css/guestbook.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/jquery/jquery-1.9.0.js"></script>
+<script type="text/javascript">
+	function checkWrite(){
+		
+		var content=$("textarea").val();
+		
+		if(content==""){
+			alert("내용을 써주세요.");
+			$("#content").focus();
+			return false;
+		}
+		
+		return true;
+	}
+</script>
 </head>
 <body>
 	<div id="container">

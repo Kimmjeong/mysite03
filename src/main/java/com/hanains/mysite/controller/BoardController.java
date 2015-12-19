@@ -2,8 +2,8 @@ package com.hanains.mysite.controller;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,7 +40,6 @@ public class BoardController {
 		return "/board/list";
 	}
 	
-	
 	// 글쓰기 폼
 	@Auth
 	@RequestMapping("/writeform") 
@@ -52,12 +51,8 @@ public class BoardController {
 	@Auth
 	@RequestMapping("/write") 
 	public String write(@AuthUser UserVo authUser, @ModelAttribute BoardVo vo, @RequestParam( "uploadFile" ) MultipartFile multipartFile){
-		
 		vo.setMemberNo(authUser.getNo());
-		boardService.insert(vo);
-		// 파일 업로드
-		boardService.insertFile(multipartFile);
-		
+		boardService.insert(vo, multipartFile);
 		return "redirect:/board";
 	}
 	
@@ -65,8 +60,7 @@ public class BoardController {
 	@Auth
 	@RequestMapping("/reply/{no}")
 	public String reply( @PathVariable("no") Long no, Model model){
-		
-		BoardVo vo = boardService.writeInfo(no);
+		BoardVo vo = boardService.writeData(no);
 		model.addAttribute("vo",vo);
 		return "/board/write";
 	}
@@ -74,7 +68,6 @@ public class BoardController {
 	// 글보기
 	@RequestMapping("/view/{no}") 
 	public String view(@PathVariable("no") Long no, Model model){
-
 		Map<String, Object> map=boardService.view(no);
 		model.addAttribute("writeView",map);
 		return "/board/view";
@@ -84,8 +77,7 @@ public class BoardController {
 	@Auth
 	@RequestMapping("/modifyform/{no}") 
 	public String modifyform(@PathVariable("no") Long no, Model model){
-		Map<String, Object> map=boardService.view(no);
-		
+		Map<String, Object> map=boardService.getModifyWriteInfo(no);
 		model.addAttribute("writeView",map);
 		return "/board/modify";
 		
@@ -94,10 +86,9 @@ public class BoardController {
 	// 글수정
 	@Auth
 	@RequestMapping("/modify") 
-	public String modify(@AuthUser UserVo authUser, @ModelAttribute BoardVo vo){
+	public String modify(@AuthUser UserVo authUser, @ModelAttribute BoardVo vo, @RequestParam( "uploadFile" ) MultipartFile multipartFile){
 		vo.setMemberNo( authUser.getNo() );
-		boardService.update(vo);
-		
+		boardService.update(vo, multipartFile);
 		return "redirect:/board";
 	}
 	

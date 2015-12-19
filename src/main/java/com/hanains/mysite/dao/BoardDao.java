@@ -14,86 +14,90 @@ import com.hanains.mysite.vo.UploadFileVo;
 
 @Repository
 public class BoardDao {
-	
+
 	@Autowired
 	private SqlSession sqlSession;
-		
+
 	// 전체 글목록
-	public List<BoardDTO> getList(String kwd, Long start, Long end){
-		
-		Map<String, Object> map=new HashMap<>();
+	public List<BoardDTO> getList(String kwd, Long start, Long end) {
+
+		Map<String, Object> map = new HashMap<>();
 		map.put("start", start);
 		map.put("end", end);
 		map.put("kwd", kwd);
-		
-		List<BoardDTO> list=sqlSession.selectList("board.getBoardList", map);
+
+		List<BoardDTO> list = sqlSession.selectList("board.getBoardList", map);
 		return list;
 	}
-	
+
 	// 게시글 수
-	public Long getCount(String kwd){
-		Map<String, Object> map=new HashMap<>();
+	public Long getCount(String kwd) {
+		Map<String, Object> map = new HashMap<>();
 		map.put("kwd", kwd);
-		
-		Long cnt=sqlSession.selectOne("board.getCount",map);
+
+		Long cnt = sqlSession.selectOne("board.getCount", map);
 		return cnt;
 	}
-	
+
 	// 하나의 게시글 정보
-	public BoardVo getOneBoard(Long no){
-		BoardVo vo=sqlSession.selectOne("board.getOneBoardData",no);
+	public BoardVo getOneBoard(Long no) {
+		BoardVo vo = sqlSession.selectOne("board.getOneBoardData", no);
 		return vo;
 	}
-	
+
 	/*
-	// 글보기
-	public BoardVo view(Long no){
-		BoardVo vo=sqlSession.selectOne("board.view",no);
-		return vo;
-	}
-	*/	
-	
+	 * // 글보기 public BoardVo view(Long no){ BoardVo
+	 * vo=sqlSession.selectOne("board.view",no); return vo; }
+	 */
+
 	// 글쓰기
-	public void insert(BoardVo vo){
+	public void insert(BoardVo vo) {
 		sqlSession.selectOne("board.insert", vo);
 	}
-	
+
 	// 파일 업로드
-	public void insertFile(UploadFileVo vo){
-		sqlSession.selectOne("board.insertFile",vo);
+	public void insertFile(UploadFileVo vo, int temp) {
+		Map<String, Object> map=new HashMap<>();
+		map.put("vo", vo);
+		map.put("temp", temp);
+		sqlSession.selectOne("board.insertFile", map);
 	}
-	
-	
-	public UploadFileVo getFileData(Long no){
-		UploadFileVo vo=sqlSession.selectOne("board.getFileData",no);
-		System.out.println(vo);
+
+	// 파일 수정
+	public void updateFile(UploadFileVo vo) {
+		System.out.println("파일수정: "+vo);
+		sqlSession.selectOne("board.updateFile",vo);
+	}
+
+	// 파일 정보 가져오기
+	public UploadFileVo getFileData(Long no) {
+		UploadFileVo vo = sqlSession.selectOne("board.getFileData", no);
 		return vo;
 	}
 
 	// 글삭제
-	public void delete(Long no, Long memberNo){
-		
-		Map<String, Object> map=new HashMap<>();
+	public void delete(Long no, Long memberNo) {
+
+		Map<String, Object> map = new HashMap<>();
 		map.put("no", no);
 		map.put("memberNo", memberNo);
-		
-		sqlSession.selectOne("board.delete",map);
+
+		sqlSession.selectOne("board.delete", map);
 	}
 
 	// 글수정
-	public void update(BoardVo vo){
-		sqlSession.selectOne("board.update",vo);
+	public void update(BoardVo vo) {
+		sqlSession.selectOne("board.update", vo);
 	}
 
 	// 조회수 증가
-	public void viewCount(Long no){
-		sqlSession.selectOne("board.viewCount",no);
+	public void viewCount(Long no) {
+		sqlSession.selectOne("board.viewCount", no);
 	}
-
 
 	// 최대 그룹 번호
 	public Long getGroupNo() {
-		Long maxGroupNo=sqlSession.selectOne("board.getGroupNo");
+		Long maxGroupNo = sqlSession.selectOne("board.getGroupNo");
 		return maxGroupNo;
 	}
 
@@ -101,5 +105,5 @@ public class BoardDao {
 	public void updateOrderNo(Long orderNo) {
 		sqlSession.selectOne("board.updateOrderNo", orderNo);
 	}
-		
+
 }

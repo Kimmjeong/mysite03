@@ -8,6 +8,28 @@
 <title>mysite</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <link href="${pageContext.request.contextPath}/assets/css/board.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/jquery/jquery-1.9.0.js"></script>
+<script type="text/javascript">
+	function checkWrite(){
+		
+		var title=$("#title").val();
+		var content=$("textarea").val();
+		
+		if(title==""){
+			alert("제목을 써주세요.");
+			$("#title").focus();
+			return false;
+		}
+		
+		if(content==""){
+			alert("내용을 써주세요.");
+			$("#content").focus();
+			return false;
+		}
+		
+		return true;
+	}
+</script>
 </head>
 <body>
 <c:set var="vo" value="${writeView.boardVo}"/>
@@ -15,7 +37,7 @@
 		<c:import url="/WEB-INF/views/include/header.jsp"/>
 		<div id="content">
 			<div id="board">
-				<form class="board-form" method="post" action="${pageContext.request.contextPath}/board/modify">
+				<form class="board-form" method="post" action="${pageContext.request.contextPath}/board/modify" enctype="multipart/form-data">
 					<input type="hidden" name="no" value="${vo.no}">
 					<table class="tbl-ex">
 						<tr>
@@ -23,7 +45,7 @@
 						</tr>
 						<tr>
 							<td class="label">제목</td>
-							<td><input type="text" name="title" value="${vo.title }"></td>
+							<td><input type="text" name="title" value="${vo.title }" id="title"></td>
 						</tr>
 						<tr>
 							<td class="label">내용</td>
@@ -32,12 +54,20 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="label">파일</td>
-							<td><input type="file" name="uploadFile" value=""></td>
+							<td rowspan="2">파일</td>
+							<td>
+								<c:if test="${not empty writeView.imageName }">
+									<div>${writeView.imageName }</div>
+								</c:if>
+							</td>
 						</tr>
+						<tr>
+							<td><input type="file" name="uploadFile"></td>
+						</tr>
+						
 					</table>
 					<div class="bottom">
-						<a href="${pageContext.request.contextPath}/board/view/${vo.no }">취소</a>
+						<a href="${pageContext.request.contextPath}/board">취소</a>
 						<input type="submit" value="수정">
 					</div>
 				</form>				
